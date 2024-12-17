@@ -1,0 +1,1 @@
+web: java $JVM_OPTS -cp target/spectator.jar clojure.main -m spectator.server
