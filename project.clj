@@ -5,13 +5,12 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.flatland/ordered "1.5.7"]
-                 [clj-commons/secretary "1.2.4"]
                  [http-kit "2.3.0"]
                  [environ "1.1.0"]
                  [metosin/compojure-api "1.1.11"]
                  [ring/ring-mock "0.4.0"]
-                 [hiccup "1.0.5"]
-                 [org.clojars.pallix/batik "1.7.0"]]
+                 [cheshire/cheshire "5.13.0"]
+                 [org.clojure/data.json "2.5.1"]]
   :main spectator.server
   :plugins [[environ/environ.lein "0.3.1"]
             [lein-ancient "0.6.15"]]
@@ -20,4 +19,4 @@
   :resource-paths ["resources"]
   :target-path "target/%s"
   :profiles {:production {:env {:production true}
-                           :resource-paths ["resources"]}})
+                          :resource-paths ["resources"]}})
