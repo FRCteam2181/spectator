@@ -1,0 +1,276 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/Config",
+  "definitions": {
+    "Config": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "page_title": {
+          "type": "string"
+        },
+        "aggregateBy": {
+          "type": "string"
+        },
+        "distinct": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Section"
+          }
+        },
+        "reports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Report"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "page_title",
+        "sections"
+      ],
+      "additionalProperties": false
+    },
+    "Section": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InputProps"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "InputProps": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/InputTypes"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "code": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "preserveDataOnReset": {
+          "type": "boolean",
+          "description": "If true, field data will not be cleared when the scouting form is reset."
+        },
+        "value": {},
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "defaultValue": {},
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "step": {
+          "type": "number"
+        },
+        "autoIncrementOnReset": {
+          "type": "boolean"
+        },
+        "columnOrder": {
+          "type": "number"
+        },
+        "calculation": {
+          "$ref": "#/definitions/Expression"
+        },
+        "aggregate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AggregateConfig"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "type",
+        "required",
+        "code"
+      ],
+      "additionalProperties": false
+    },
+    "Expression": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "number",
+          "array"
+        ],
+        "prefixItems": [
+          {
+            "type": "string",
+            "enum": [
+              "+",
+              "-",
+              "*",
+              "/",
+              "%",
+              "&",
+              "|",
+              "min",
+              "max",
+              "abs",
+              "ceil",
+              "floor",
+              "round",
+              "pow",
+              "true2One",
+              "false2One"
+            ]
+          }
+        ],
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "$ref": "#/definitions/Expression"
+          }
+        ]
+      }
+    },
+    "InputTypes": {
+      "type": "string",
+      "enum": [
+        "text",
+        "number",
+        "boolean",
+        "range",
+        "counter",
+        "enum",
+        "enum-set",
+        "markdown",
+        "calculated"
+      ]
+    },
+    "AggregateConfig": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "aggFunction": {
+          "type": "string",
+          "enum": [
+            "min",
+            "max",
+            "sum",
+            "product",
+            "mean",
+            "median",
+            "mode",
+            "countTrue",
+            "countFalse",
+            "countIf",
+            "countIfNot",
+            "union",
+            "intersection",
+            "minCount",
+            "maxCount",
+            "unionCount",
+            "intersectionCount"
+          ]
+        },
+        "additionalArguments": {
+          "type": "array",
+          "items": {
+            "type": [
+              "number",
+              "string",
+              "boolean",
+              "object",
+              "array",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "title",
+        "code"
+      ],
+      "additionalProperties": false
+    },
+    "Report": {
+      "type": "object",
+      "properties": {
+        "reportTitle": {
+          "type": "string"
+        },
+        "orderBy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReportOrder"
+          }
+        }
+      },
+      "required": [
+        "reportTitle",
+        "orderBy"
+      ],
+      "additionalProperties": false
+    },
+    "ReportOrder": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

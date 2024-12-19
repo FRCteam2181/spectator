@@ -1,6 +1,7 @@
 (ns spectator.session 
   (:require
-   [clojure.core.async :as async]) 
+   [clojure.core.async :as async]
+   [spectator.data :as data]) 
   (:import
    [clojure.lang ExceptionInfo]))
 
@@ -22,52 +23,38 @@
   (when (and (not= (:host-ip @session) user-ip) (not (contains? (:guests @session) user-ip)))
     (throw (ExceptionInfo. {:error-type :user-is-not-guest}))))
 
-(defmulti apply-action :action)
-
-(defn build [schematic host-ip]
-  (let [session (atom schematic)
+(defn build [config host-ip]
+  (let [session (atom (data/init-session config host-ip))
         action-chan (async/chan 200)
         exists (atom true)]
     (async/thread
       (while @exists
         (let [action (async/<!! action-chan)]
-          (swap! session (apply-action action)))))
+          (swap! session action))))
     (reify Session
-      (join [this user-ip guest]
-        (async/>!! action-chan {:action :join :user-ip user-ip :guest guest}))
-      (get-session [this user-ip]
+      (join [_ user-ip guest]
+        (async/>!! action-chan #(data/join % user-ip guest)))
+      (get-session [_ user-ip]
         (verify-host-ip host-ip user-ip)
         @session) 
-      (get-session-records [this user-ip]
+      (get-session-records [_ user-ip]
         (verify-user-ip @session user-ip)
         (:records @session)) 
-      (post-session-record [this user-ip new-record]
+      (post-session-record [_ user-ip new-record]
         (verify-user-ip @session user-ip)
-        (async/>!! action-chan {:action :post-session-record :new-record new-record})
+        (async/>!! action-chan #(data/post-session-record % new-record))
         new-record)
-      (get-session-reports [this user-ip]
+      (get-session-reports [_ user-ip]
         (verify-user-ip @session user-ip)
         (:reports @session)) 
-      (upsert-reports [this user-ip reports-list]
+      (upsert-reports [_ user-ip reports-list]
         (verify-user-ip @session user-ip)
-        (async/>!! action-chan {:action :upsert-reports :reports-list reports-list})
+        (async/>!! action-chan #(data/upsert-reports % reports-list))
         reports-list)
-      (get-aggregate [this user-ip]
+      (get-aggregate [_ user-ip]
         (verify-user-ip @session user-ip)
         (:aggregated @session))
-      (close-session [this user-ip]
+      (close-session [_ user-ip]
         (verify-host-ip host-ip user-ip)
         (reset! exists false)
         @session))))
-                       
-(defmethod apply-action :join [{user-ip :user-ip guest :guest}]
-  ; todo - validate guest uniqueness and not host
-  #(update % :guests assoc user-ip guest))
-
-(defmethod apply-action :post-session-record [{new-record :new-record}]
-  ; todo - validate data schema, run reports
-  #(update % :records conj new-record))
-
-(defmethod apply-action :upsert-reports [{reports-list :reports-list}]
-  ; todo - run reports
-  #(assoc % :reports reports-list))
