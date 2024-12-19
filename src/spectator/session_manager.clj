@@ -44,7 +44,7 @@
           (async/>!! new-session-chan
                      {:action :new
                       :session-id session-id
-                      :session (session/build session user-ip)})
+                      :session (session/build session user-ip session-id)})
           {:session-id session-id}))
       (join [_ user-ip session-id guest] 
         (pp/pprint {:fn :join :user-ip user-ip :session-id session-id :guest guest})

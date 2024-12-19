@@ -53,7 +53,7 @@
              (sweet/resource
               {:description ""
                :post {:summary    ""
-                      :parameters {:body schema/Session}
+                      :parameters {:body schema/SessionConfig}
                       :consumes   ["application/json"]
                       :produces   ["application/json"]
                       :responses  {200 {:schema schema/SessionAck}}
@@ -73,12 +73,12 @@
                                    :body schema/Guest}
                       :consumes   ["application/json"]
                       :produces   ["application/json"]
-                      :responses  {200 {:schema schema/GuestAck}}
+                      :responses  {200 {:schema schema/Guest}}
                       :handler    (errors/wrap-error-handling
                                    [:query-params :key] schema/SessionId
                                    (fn [{:keys [body] {:keys [key]} :query-params user-ip :remote-addr :as req}]
                                      (pprint/pprint {:req req})
-                                     (print/pprint {:key key :body body})
+                                     (pprint/pprint {:key key :body body})
                                      (let [text (slurp ^ByteArrayInputStream body)
                                            result (->> (parse-string text true)
                                                        (sm/join user-ip session-manager key))]

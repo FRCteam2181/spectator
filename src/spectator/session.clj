@@ -23,8 +23,8 @@
   (when (and (not= (:host-ip @session) user-ip) (not (contains? (:guests @session) user-ip)))
     (throw (ExceptionInfo. {:error-type :user-is-not-guest}))))
 
-(defn build [config host-ip]
-  (let [session (atom (data/init-session config host-ip))
+(defn build [config host-ip session-id]
+  (let [session (atom (data/init-session config host-ip session-id))
         action-chan (async/chan 200)
         exists (atom true)]
     (async/thread
@@ -33,7 +33,8 @@
           (swap! session action))))
     (reify Session
       (join [_ user-ip guest]
-        (async/>!! action-chan #(data/join % user-ip guest)))
+        (async/>!! action-chan #(data/join % user-ip guest))
+        guest)
       (get-session [_ user-ip]
         (verify-host-ip host-ip user-ip)
         @session) 
@@ -53,7 +54,7 @@
         reports-list)
       (get-aggregate [_ user-ip]
         (verify-user-ip @session user-ip)
-        (:aggregated @session))
+        (select-keys @session [:aggregate :reports]))
       (close-session [_ user-ip]
         (verify-host-ip host-ip user-ip)
         (reset! exists false)
