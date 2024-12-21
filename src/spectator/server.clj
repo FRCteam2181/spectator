@@ -43,7 +43,6 @@
             :data {:info {:title       "Spectator"
                           :description "robotics scouting app"}
                    :tags [{:name "api" :description "background api"}]}}}
-
         (sweet/api
          (api/context
            "/api/v1/session" []
@@ -53,7 +52,7 @@
              (sweet/resource
               {:description ""
                :post {:summary    ""
-                      :parameters {:body schema/SessionConfig}
+                      :parameters {:body schema/SessionInit}
                       :consumes   ["application/json"]
                       :produces   ["application/json"]
                       :responses  {200 {:schema schema/SessionAck}}

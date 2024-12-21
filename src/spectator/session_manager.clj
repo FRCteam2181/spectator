@@ -20,7 +20,7 @@
 (defn- get-my-session [sessions session-id]
   (if (contains? sessions session-id)
     (get sessions session-id)
-    (throw (ExceptionInfo. {:error-type :session-id-not-found :session-id session-id}))))
+    (throw (ExceptionInfo. "" {:error-type :session-id-not-found :session-id session-id}))))
 
 (defmulti apply-action :action)
 
@@ -39,12 +39,13 @@
           (swap! sessions (apply-action action)))))
     (reify SessionManager
       (host [_ user-ip session] 
-        (let [session-id (random-uuid)]
-          (pp/pprint {:fn :host :user-ip user-ip :session session})
+        (let [session-id (random-uuid)
+              {config :config host :host} session]
+          (pp/pprint {:fn :host :user-ip user-ip :host host :config config})
           (async/>!! new-session-chan
                      {:action :new
                       :session-id session-id
-                      :session (session/build session user-ip session-id)})
+                      :session (session/build config host user-ip session-id)})
           {:session-id session-id}))
       (join [_ user-ip session-id guest] 
         (pp/pprint {:fn :join :user-ip user-ip :session-id session-id :guest guest})

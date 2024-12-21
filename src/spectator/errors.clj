@@ -8,7 +8,7 @@
 (defmulti handle-error :error-type)
 
 (defmethod handle-error :default
-  [error] (throw (ExceptionInfo. error)))
+  [error] (throw (ExceptionInfo. "" error)))
 
 (defmethod handle-error :session-id-not-found
   [error]

@@ -1,8 +1,6 @@
 (ns spectator.schema
   (:require [schema.core :as s]))
 
-(def ^:private dummy {:a s/Str})
-
 (s/defschema ReportsList
   [{:reportTitle s/Str
     :orderBy 
@@ -10,7 +8,7 @@
       :direction (s/enum "asc" "desc")}]}])
 
 (s/defschema Expression
-  [(s/One (s/enum "+",
+  [(s/one (s/enum "+",
                   "-",
                   "*",
                   "/",
@@ -25,7 +23,7 @@
                   "round",
                   "pow",
                   "true2One",
-                  "false2One"))
+                  "false2One") "operation")
    (s/cond-pre (s/recursive #'Expression)
                (s/cond-pre s/Str s/Num))])
 
@@ -104,6 +102,10 @@
    :lastName s/Str
    (s/optional-key :middleName) s/Str
    (s/optional-key :teamNumber) s/Str})
+
+(s/defschema SessionInit
+  {:config SessionConfig
+   :host Guest})
 
 (s/defschema Session 
   {:config SessionConfig

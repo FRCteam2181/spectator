@@ -10,13 +10,14 @@
    :reports []})
 
 (defn join [session user-ip guest]
-  ; todo ?
   (update session :guests assoc user-ip guest))
 
 (defn post-session-record [session new-record]
-  ; todo ?
-  (update session :records conj new-record))
+  (update session :records conj new-record)
+  ; todo - recalculate aggregate & reports
+  )
 
 (defn upsert-reports [session reports-list]
-  ; todo ?
-  (assoc session :reports reports-list))
+  (update session :config assoc :reports reports-list)
+  ; todo - recalculate session reports
+  )

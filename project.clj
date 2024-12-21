@@ -10,7 +10,9 @@
                  [metosin/compojure-api "1.1.11"]
                  [ring/ring-mock "0.4.0"]
                  [cheshire/cheshire "5.13.0"]
-                 [org.clojure/data.json "2.5.1"]]
+                 [org.clojure/data.json "2.5.1"]
+                 [prismatic/schema "1.4.1"] 
+                 [org.clojure/core.async "1.7.701"]]
   :main spectator.server
   :plugins [[environ/environ.lein "0.3.1"]
             [lein-ancient "0.6.15"]]
